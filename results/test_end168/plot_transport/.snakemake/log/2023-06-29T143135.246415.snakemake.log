@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                 count    min threads    max threads
+----------------  -------  -------------  -------------
+all                     1              1              1
+plots_individual        1              1              1
+total                   2              1              1
+
+Select jobs to execute...
+
+[Thu Jun 29 14:31:35 2023]
+rule plots_individual:
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png
+    jobid: 2
+    reason: Missing output files: results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png
+    wildcards: simpl=, clusters=37, ll=v1.0, opts=, sector_opts=Co2L0-168H-T-H-B-I-A-solar+p3-dist1, planning_horizons=2050
+    resources: tmpdir=/tmp
+
+[Thu Jun 29 14:31:37 2023]
+Error in rule plots_individual:
+    jobid: 2
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-06-29T143135.246415.snakemake.log
