@@ -1,4 +1,0 @@
-Building DAG of jobs...
-WildcardError in rule plots_individual in file /home/au731993/Documents/test_end168/plot_transport/Snakefile, line 37:
-Wildcards in input files cannot be determined from output files:
-'clusters'

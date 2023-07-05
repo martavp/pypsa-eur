@@ -1,3 +1,0 @@
-WildcardError in file /home/au731993/Documents/test_end168/plot_transport/Snakefile, line 18:
-No values given for wildcard 'planning_horizon'.
-  File "/home/au731993/Documents/test_end168/plot_transport/Snakefile", line 18, in <module>

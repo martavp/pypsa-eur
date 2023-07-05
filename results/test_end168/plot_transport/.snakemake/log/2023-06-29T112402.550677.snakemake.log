@@ -1,6 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule plots_together in file /home/au731993/Documents/test_end168/plot_transport/Snakefile, line 27:
-Missing input files for rule plots_together:
-    output: results/generators.png, results/vehiclenb.png
-    affected files:
-        results/elec_s_2050.nc

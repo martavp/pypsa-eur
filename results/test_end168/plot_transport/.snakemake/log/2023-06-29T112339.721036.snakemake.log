@@ -1,3 +1,0 @@
-WorkflowError in file /home/au731993/Documents/test_end168/plot_transport/Snakefile, line 4:
-Workflow defines configfile config.yaml but it is not present or accessible (full checked path: /home/au731993/Documents/test_end168/plot_transport/config.yaml).
-  File "/home/au731993/Documents/test_end168/plot_transport/Snakefile", line 4, in <module>

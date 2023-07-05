@@ -1428,8 +1428,10 @@ def add_storage_and_grids(n, costs):
 
 def add_land_transport(n, costs):
     # TODO options?
-
-    logger.info("Add land transport")
+    if not options["endogenous_transport"]:
+        logger.info("Add land transport (exogenous share)")
+    else:
+        logger.info("Add land transport (endogenous)")
     nhours = n.snapshot_weightings.generators.sum()
 
     transport = pd.read_csv(
@@ -1446,6 +1448,7 @@ def add_land_transport(n, costs):
     )
     nodes = pop_layout.index
     if not options["endogenous_transport"]:
+
         fuel_cell_share = get(options["land_transport_fuel_cell_share"], investment_year)
         electric_share = get(options["land_transport_electric_share"], investment_year)
         ice_share = get(options["land_transport_ice_share"], investment_year)
@@ -1593,6 +1596,7 @@ def add_land_transport(n, costs):
                 p_set=-co2,
             )
     if options["endogenous_transport"]:
+            print("endogenous transport")
             
             # Add loads
             n.add("Carrier", "land transport demand")
@@ -1696,7 +1700,7 @@ def add_land_transport(n, costs):
                 bus1=nodes + " land transport bus",
                 bus2="co2 atmosphere",
                 carrier="land transport oil",
-                capital_cost = 0,#(costs.at['Liquid fuels ICE (passenger cars)', 'investment']*(calculate_annuity(costs.at['Liquid fuels ICE (passenger cars)', 'lifetime'], 0.07)+costs.at['Liquid fuels ICE (passenger cars)', 'FOM']/100))/options['energy_to_cars'] * ice_efficiency, #snakemake.config['costs']['capital_cost']['ICE_vehicle']/options['energy_to_cars'] * ice_efficiency, #TO DO: annualize
+                capital_cost = (costs.at['Liquid fuels ICE (passenger cars)', 'investment']*(calculate_annuity(costs.at['Liquid fuels ICE (passenger cars)', 'lifetime'], 0.07)+costs.at['Liquid fuels ICE (passenger cars)', 'FOM']/100))/options['energy_to_cars'] * ice_efficiency, #snakemake.config['costs']['capital_cost']['ICE_vehicle']/options['energy_to_cars'] * ice_efficiency, #TO DO: annualize
                 efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'], #ice_efficiency,  
                 efficiency2 = costs.at['oil', 'CO2 intensity']*costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'],
                 p_min_pu = 0, #L_norm_t, #*ice_efficiency,
@@ -3372,7 +3376,7 @@ def apply_time_segmentation(
 
 def set_temporal_aggregation(n, opts, solver_name):
     """
-    Aggregate n temporally.
+    Aggregate network temporally.
     """
     for o in opts:
         # temporal averaging

@@ -1,5 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule all in file /home/au731993/Documents/test_end168/plot_transport/Snakefile, line 15:
-Missing input files for rule all:
-    affected files:
-        results/generators_profile_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.png
