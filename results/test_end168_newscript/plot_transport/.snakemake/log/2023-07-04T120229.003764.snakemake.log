@@ -1,0 +1,7 @@
+Building DAG of jobs...
+MissingInputException in rule plots_together in file /home/sk/projects/pypsa-eur/results/test_end168_exo/plot_transport/Snakefile, line 27:
+Missing input files for rule plots_together:
+    output: results/vehiclenb.png
+    affected files:
+        elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.nc
+        elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.nc

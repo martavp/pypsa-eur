@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                 count    min threads    max threads
+----------------  -------  -------------  -------------
+all                     1              1              1
+plots_individual        1              1              1
+plots_together          1              1              1
+total                   3              1              1
+
+Select jobs to execute...
+
+[Thu Jun 29 13:39:15 2023]
+rule plots_together:
+    input: elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/generators.png, results/vehiclenb.png
+    jobid: 1
+    reason: Missing output files: results/generators.png, results/vehiclenb.png
+    resources: tmpdir=/tmp
+
+[Thu Jun 29 13:39:17 2023]
+Error in rule plots_together:
+    jobid: 1
+    input: elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/generators.png, results/vehiclenb.png
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-06-29T133915.125697.snakemake.log

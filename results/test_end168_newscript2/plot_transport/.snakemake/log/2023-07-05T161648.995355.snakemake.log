@@ -1,0 +1,29 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 5
+Rules claiming more threads will be scaled down.
+Job stats:
+job               count    min threads    max threads
+--------------  -------  -------------  -------------
+plots_together        1              1              1
+total                 1              1              1
+
+Select jobs to execute...
+
+[Wed Jul  5 16:16:49 2023]
+rule plots_together:
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.nc, ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2040.nc, ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/vehiclenb.png
+    jobid: 0
+    reason: Missing output files: results/vehiclenb.png
+    resources: tmpdir=/tmp
+
+[Wed Jul  5 16:16:55 2023]
+Error in rule plots_together:
+    jobid: 0
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.nc, ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2040.nc, ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2050.nc
+    output: results/vehiclenb.png
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-07-05T161648.995355.snakemake.log

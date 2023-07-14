@@ -42,7 +42,16 @@ from _helpers import (
 logger = logging.getLogger(__name__)
 pypsa.pf.logger.setLevel(logging.WARNING)
 from pypsa.descriptors import get_switchable_as_dense as get_as_dense
+from pathlib import Path
+import os
 
+tmpdir = '/scratch/' + os.environ['SLURM_JOB_ID']
+print(tmpdir)
+#tmpdir = snakemake.config['solving']['tmpdir']
+#print(tmpdir)
+
+if tmpdir is not None:
+   Path(tmpdir).mkdir(parents=True, exist_ok=True)
 
 def add_land_use_constraint(n, config):
     if "m" in snakemake.wildcards.clusters:
@@ -593,7 +602,7 @@ def add_EV_number_constraint():
     #lhs2 = network.model.variables['Link-p_nom'].sel({'Link-ext':'EV'})/options['EV_consumption_1car']
     lhs = lhs1-lhs2
     rhs = 0
-    network.model.add_constraints(lhs==rhs, name="constraint_EV_number")
+    n.model.add_constraints(lhs==rhs, name="constraint_EV_number")
 
 def extra_functionality(n, snapshots):
     """
@@ -620,7 +629,8 @@ def extra_functionality(n, snapshots):
             add_EQ_constraints(n, o)
     add_battery_constraints(n)
     add_pipe_retrofit_constraint(n)
-    if config['sector']["endogenous_transport"]:
+    investment_year = int(snakemake.wildcards.planning_horizons[-4:])
+    if config['sector']["land_transport_electric_share"][investment_year] < 0:
         if config['sector']["bev_dsm"]:
           print('bev_dsm true')
           add_EV_storage_constraint()
@@ -628,6 +638,7 @@ def extra_functionality(n, snapshots):
         if config['sector']["v2g"]:
           print('v2g true')
           add_v2g_constraint()
+
 
 def solve_network(n, config, opts="", **kwargs):
     set_of_options = config["solving"]["solver"]["options"]
@@ -653,6 +664,7 @@ def solve_network(n, config, opts="", **kwargs):
     if skip_iterations:
         status, condition = n.optimize(
             solver_name=solver_name,
+            model_kwargs={"solver_dir":tmpdir},
             transmission_losses=transmission_losses,
             extra_functionality=extra_functionality,
             **solver_options,
@@ -661,6 +673,7 @@ def solve_network(n, config, opts="", **kwargs):
     else:
         status, condition = n.optimize.optimize_transmission_expansion_iteratively(
             solver_name=solver_name,
+            model_kwargs={"solver_dir":tmpdir},
             track_iterations=track_iterations,
             min_iterations=min_iterations,
             max_iterations=max_iterations,

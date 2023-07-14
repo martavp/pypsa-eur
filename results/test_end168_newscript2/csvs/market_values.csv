@@ -1,0 +1,36 @@
+cluster,37
+ll,v1.0
+opt,Co2L0-168H-T-H-B-I-A-solar+p3-dist1
+planning_horizon,2030
+CCGT,200.0783538820143
+DC,22.819740061421825
+H2 Electrolysis,33.797632450042414
+H2 Fuel Cell,63.5679620478246
+OCGT,258.93727246352023
+battery charger,43.42535276032918
+battery discharger,43.44643876165179
+coal,338.6450826016502
+electricity distribution grid,60.86155126678578
+lignite,124.35525857233839
+nuclear,63.40208493523727
+offwind,50.31540596018124
+offwind-ac,52.14619840408282
+offwind-dc,54.14720417001147
+oil,440.5747850967851
+onwind,45.38848433109974
+residential rural ground heat pump,75.532960772469
+residential rural resistive heater,66.13433938657562
+residential urban decentral air heat pump,79.55071896681498
+residential urban decentral resistive heater,76.34048029989488
+ror,50.662701089781
+services rural ground heat pump,74.37190708152986
+services rural resistive heater,70.06413933112901
+services urban decentral air heat pump,79.53227052971769
+services urban decentral resistive heater,75.91608809758934
+solar,37.78484506364478
+urban central air heat pump,60.01652238638937
+urban central gas CHP,149.87501030808335
+urban central gas CHP CC,106.25171646750464
+urban central resistive heater,44.28035724112791
+urban central solid biomass CHP,143.51324445614077
+urban central solid biomass CHP CC,99.80021761215498
