@@ -1,0 +1,46 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                 count    min threads    max threads
+----------------  -------  -------------  -------------
+all                     1              1              1
+plots_individual        2              1              1
+plots_together          1              1              1
+total                   4              1              1
+
+Select jobs to execute...
+
+[Tue Jul  4 13:08:00 2023]
+rule plots_individual:
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.nc
+    output: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png
+    jobid: 2
+    reason: Missing output files: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2020.png
+    wildcards: simpl=, clusters=37, ll=v1.0, opts=, sector_opts=Co2L0-168H-T-H-B-I-A-solar+p3-dist1, planning_horizons=2020
+    resources: tmpdir=/tmp
+
+[Tue Jul  4 13:08:16 2023]
+Finished job 2.
+1 of 4 steps (25%) done
+Select jobs to execute...
+
+[Tue Jul  4 13:08:16 2023]
+rule plots_individual:
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.nc
+    output: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png
+    jobid: 3
+    reason: Missing output files: results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png
+    wildcards: simpl=, clusters=37, ll=v1.0, opts=, sector_opts=Co2L0-168H-T-H-B-I-A-solar+p3-dist1, planning_horizons=2030
+    resources: tmpdir=/tmp
+
+[Tue Jul  4 13:08:20 2023]
+Error in rule plots_individual:
+    jobid: 3
+    input: ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.nc
+    output: results/EV_balance_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_soc_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/EV_soc_1day_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_1year_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_period_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png, results/transport_balance_and_load_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2030.png
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-07-04T130800.076187.snakemake.log

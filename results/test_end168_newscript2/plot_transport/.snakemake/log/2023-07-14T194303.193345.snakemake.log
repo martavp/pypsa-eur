@@ -1,0 +1,5 @@
+Building DAG of jobs...
+MissingInputException in rule all in file /home/sk/projects/pypsa-eur/results/test_end168_newscript2/plot_transport/Snakefile, line 15:
+Missing input files for rule all:
+    affected files:
+        ../postnetworks/elec_s_37_lv1.0__Co2L0-168H-T-H-B-I-A-solar+p3-dist1_2040.nc

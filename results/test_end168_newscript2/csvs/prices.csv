@@ -1,0 +1,34 @@
+cluster,37
+ll,v1.0
+opt,Co2L0-168H-T-H-B-I-A-solar+p3-dist1
+planning_horizon,2030
+AC,55.60953720161603
+lignite,-3.5833979755296013
+coal,6.547624168597669
+oil,29.335680857550603
+uranium,2.6093399701531435
+co2,-406.17009872449023
+co2 stored,-235.39246003821768
+gas,20.102304854475072
+H2,72.2955236787337
+battery,55.57003845105318
+land transport demand,0.0
+Li ion,68.07604333216209
+residential rural heat,35.9570724779833
+residential rural water tanks,36.608912370996684
+services rural heat,36.1851470729183
+services rural water tanks,36.82522683836342
+residential urban decentral heat,44.25011865359368
+residential urban decentral water tanks,45.21468684791932
+services urban decentral heat,45.00405741468517
+services urban decentral water tanks,46.0670795846611
+urban central heat,36.63305896505273
+urban central water tanks,35.076714347447734
+biogas,92.2879545318195
+solid biomass,81.28807129362625
+solid biomass for industry,41.37777826944723
+gas for industry,86.1028293580224
+methanol,30.73572148576829
+process emissions,-287.2384879101301
+low voltage,61.25849295240635
+home battery,61.23157470979133
