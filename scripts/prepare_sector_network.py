@@ -405,7 +405,7 @@ def update_wind_solar_costs(n, costs):
             weight = ds["weight"].to_pandas()
 
             # e.g. clusters == 37m means that VRE generators are left
-            # at clustering of simplified n, but that they are
+            # at clustering of simplified network, but that they are
             # connected to 37-node network
             if snakemake.wildcards.clusters[-1:] == "m":
                 genmap = busmap_s
@@ -1461,36 +1461,45 @@ def add_land_transport(n, costs):
     logger.info(f"FCEV share: {fuel_cell_share*100}%")
     logger.info(f"EV share: {electric_share*100}%")
     logger.info(f"ICEV share: {ice_share*100}%")
-    # Add loads
+    # Add load for transport demand
     n.add("Carrier", "land transport demand")
 
     n.madd("Bus", 
             nodes,
             location=nodes,
-            suffix=" land transport bus",
+            suffix=" land transport",
             carrier="land transport demand")
     
+    # p_set formerly used only for the EV share
+    p_set = (
+        (
+            transport[nodes]
+            + cycling_shift(transport[nodes], 1)
+            + cycling_shift(transport[nodes], 2)
+        )
+        / 3
+    )
     n.madd(
         "Load",
         nodes,
         suffix=" land transport",
-        bus=nodes + " land transport bus",
+        bus=nodes + " land transport",
         carrier="land transport demand",
-        p_set=transport,
+        p_set=p_set, #transport,
     )
-    
+    # Add EV links
     if electric_share != 0:
-        # Add EV links
+        
         n.add("Carrier", "Li ion")
         n.madd(
             "Bus",
             nodes,
             location=nodes,
-            suffix=" EV battery",
+            suffix=" EV driving",
             carrier="Li ion",
             unit="MWh_el",
         )
-
+        # add bev managment when enabled
         n.add("Carrier", "EV battery storage")
 
         if options["bev_dsm"]:
@@ -1498,7 +1507,7 @@ def add_land_transport(n, costs):
                 "Store",
                 nodes,
                 suffix=" EV battery storage",
-                bus=nodes + " EV battery",
+                bus=nodes + " EV driving",
                 carrier="EV battery storage",
                 e_cyclic=True,
                 e_nom_extendable=True,
@@ -1507,18 +1516,14 @@ def add_land_transport(n, costs):
                 #lifetime?
             )
                     
-                
-            #EV_c,L_norm_t = calculate_EV_timeseries(n,alpha=1)
-
             
-        bev_charge_efficiency = options['bev_charge_efficiency']
-        
+     
         n.madd(
             "Link",
             nodes,
             suffix=" BEV charger",
             bus0=nodes,
-            bus1=nodes + " EV battery",
+            bus1=nodes + " EV driving",
             p_nom_extendable = True,
             carrier="BEV charger",
             p_max_pu=avail_profile[nodes],
@@ -1537,52 +1542,36 @@ def add_land_transport(n, costs):
             nodes,
             suffix=" V2G",
             bus1=nodes,
-            bus0=nodes + " EV battery",
+            bus0=nodes + " EV driving",
             p_nom_extendable = True,  
             carrier="V2G",
             p_max_pu=avail_profile[nodes],
             efficiency=options.get("bev_charge_efficiency", 0.9),
         )
-        # Add EV link
-        # p_set at the moment unused, is the shift necessary?
-        p_set = (
-            electric_share
-            * (
-                transport[nodes]
-                + cycling_shift(transport[nodes], 1)
-                + cycling_shift(transport[nodes], 2)
-            )
-            / 3
-        )
+        
 
-        ev_efficiency = costs.at['Battery electric (passenger cars)', 'efficiency'] #options['bev_bat_to_wheel_efficiency']
         n.madd(
             "Link",
             nodes,
             suffix=" land transport EV",
-            bus0=nodes + " EV battery",                              
-            bus1 =nodes + " land transport bus",
+            bus0=nodes + " EV driving",                              
+            bus1 =nodes + " land transport",
             carrier="land transport EV",
-            capital_cost = (costs.at['Battery electric (passenger cars)', 'investment']*(calculate_annuity(costs.at['Battery electric (passenger cars)', 'lifetime'], 0.07)+costs.at['Battery electric (passenger cars)', 'FOM']/100))/options['energy_to_cars']*(ev_efficiency*bev_charge_efficiency)*options['increase_nb_cars'], #,#snakemake.config['costs']['capital_cost']['E_vehicle']
-            efficiency = costs.at['Battery electric (passenger cars)', 'efficiency'], # ev_efficiency,#bev_charge_efficiency,        
+            capital_cost = costs.at["Battery electric (passenger cars)", "fixed"]/(options['energy_to_cars']*(costs.at['Battery electric (passenger cars)', 'efficiency']*options.get("bev_charge_efficiency", 0.9)))*options['increase_nb_cars'],
+            efficiency = costs.at['Battery electric (passenger cars)', 'efficiency'],       
             p_nom_extendable=True,
-            #p_min_pu = 0, #L_norm_t, #*ev_efficiency,
         )
+
         if electric_share > 0:
 
             n.links.loc[n.links.carrier=='land transport EV', "p_nom_extendable"] = False
             for place in nodes:
-                p_nom = ((
-                transport))
-            #     + cycling_shift(transport[place], 1)
-            #     + cycling_shift(transport[place], 2)
-            # )/ 3 )
-            
-
+                p_nom = p_set #transport
+        
                 n.links.loc[(n.links.carrier=="land transport EV") & (n.links.bus1.str.contains(place)),'p_nom'] = electric_share*max(p_nom[place])
                 n.links_t.p_min_pu[n.links[(n.links.carrier=="land transport EV") & (n.links.bus1.str.contains(place))].index.values[0]] = p_nom[place]/max(p_nom[place])/costs.at['Battery electric (passenger cars)', 'efficiency']
                 n.links_t.p_max_pu[n.links[(n.links.carrier=="land transport EV") & (n.links.bus1.str.contains(place))].index.values[0]] = p_nom[place]/max(p_nom[place])/costs.at['Battery electric (passenger cars)', 'efficiency']
-            #n.links.loc[n.links.carrier=='land transport EV', "p_set"] = p_set
+
             n.links.loc[n.links.carrier=='land transport EV', "capital_cost"] = 0
             
             p_nom = number_cars * options.get("bev_charge_rate", 0.011) * electric_share
@@ -1623,32 +1612,31 @@ def add_land_transport(n, costs):
                 unit="MWh_LHV",
             )
 
-        ice_efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'] #coptions['transport_internal_combustion_efficiency']
 
         n.madd(
             "Link",
             nodes,
             suffix=" land transport oil",
             bus0=spatial.oil.nodes,
-            bus1=nodes + " land transport bus",
+            bus1=nodes + " land transport",
             bus2="co2 atmosphere",
             carrier="land transport oil",
-            capital_cost = (costs.at['Liquid fuels ICE (passenger cars)', 'investment']*(calculate_annuity(costs.at['Liquid fuels ICE (passenger cars)', 'lifetime'], 0.07)+costs.at['Liquid fuels ICE (passenger cars)', 'FOM']/100))/options['energy_to_cars'] * ice_efficiency, #snakemake.config['costs']['capital_cost']['ICE_vehicle']/options['energy_to_cars'] * ice_efficiency, #TO DO: annualize
-            efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'], #ice_efficiency,  
-            efficiency2 = costs.at['oil', 'CO2 intensity'], #*costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'],
-            p_min_pu = 0, #L_norm_t, #*ice_efficiency,
+            capital_cost = costs.at["Liquid fuels ICE (passenger cars)", "fixed"]/(options['energy_to_cars'] * costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'] ),
+            efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'], 
+            efficiency2 = costs.at['oil', 'CO2 intensity'], 
+            p_min_pu = 0, 
             p_nom_extendable=True,
         ) 
 
 
         if ice_share > 0:
-
-            ice_efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'] #options["transport_internal_combustion_efficiency"]
+            p_nom = p_set
+            ice_efficiency = costs.at['Liquid fuels ICE (passenger cars)', 'efficiency']
             n.links.loc[n.links.carrier=='land transport oil', "p_nom_extendable"] = False
             for place in nodes:
-                n.links.loc[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place)),'p_nom'] = ice_share * max(transport[place]), #max(ice_share / ice_efficiency * transport[place]) 
-                n.links_t.p_min_pu[n.links[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place))].index.values[0]] = (transport[place])/max(transport[place])/ice_efficiency
-                n.links_t.p_max_pu[n.links[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place))].index.values[0]] = (transport[place])/max(transport[place])/ice_efficiency
+                n.links.loc[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place)),'p_nom'] = ice_share * max(p_nom[place]), 
+                n.links_t.p_min_pu[n.links[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place))].index.values[0]] = (p_nom[place])/max(p_nom[place])/ice_efficiency
+                n.links_t.p_max_pu[n.links[(n.links.carrier=="land transport oil") & (n.links.bus1.str.contains(place))].index.values[0]] = (p_nom[place])/max(p_nom[place])/ice_efficiency
             n.links.loc[n.links.carrier=='land transport oil', "capital_cost"] = 0
 
             
@@ -1676,20 +1664,20 @@ def add_land_transport(n, costs):
             nodes,
             suffix=" land transport fuel cell",
             bus0=nodes + " H2",
-            bus1=nodes + " land transport bus",
+            bus1=nodes + " land transport",
             carrier="land transport fuel cell",
-            efficiency=  costs.at['Hydrogen fuel cell (passenger cars)','efficiency'],#snakemake.config['sector']['H2_car_efficiency'],
-            capital_cost = (costs.at['Hydrogen fuel cell (passenger cars)', 'investment']*(calculate_annuity(costs.at['Hydrogen fuel cell (passenger cars)', 'lifetime'], 0.07)+costs.at['Hydrogen fuel cell (passenger cars)', 'FOM']/100)),#snakemake.config['costs']['capital_cost']['H2_vehicle'],#bev_charge_efficiency,      #TO DO: annualize  
+            efficiency=  costs.at['Hydrogen fuel cell (passenger cars)','efficiency'],
+            capital_cost = costs.at["Battery electric (passenger cars)", "fixed"]/(options['energy_to_cars'] * costs.at['Liquid fuels ICE (passenger cars)', 'efficiency'] ),
             p_nom_extendable=True,
-            #p_min_pu = 0, #L_norm_t, #*snakemake.config['sector']['H2_car_efficiency'],
+
         )
         if fuel_cell_share > 0:
+            p_nom = p_set
             n.links.loc[n.links.carrier=='land transport fuel cell', "p_nom_extendable"] = False
             for place in nodes:
-                n.links.loc[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place)),'p_nom'] = fuel_cell_share * max(transport[place])
-                n.links_t.p_min_pu[n.links[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place))].index.values[0]] = (transport[place])/max(transport[place])/ costs.at['Hydrogen fuel cell (passenger cars)','efficiency']
-                n.links_t.p_max_pu[n.links[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place))].index.values[0]] = (transport[place])/max(transport[place])/ costs.at['Hydrogen fuel cell (passenger cars)','efficiency']
-            #n.links.loc[n.links.carrier=='land transport fuel cell', "p_set"] = fuel_cell_share / options["transport_fuel_cell_efficiency"] * transport[nodes]
+                n.links.loc[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place)),'p_nom'] = fuel_cell_share * max(p_nom[place])
+                n.links_t.p_min_pu[n.links[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place))].index.values[0]] = (p_nom[place])/max(p_nom[place])/ costs.at['Hydrogen fuel cell (passenger cars)','efficiency']
+                n.links_t.p_max_pu[n.links[(n.links.carrier=="land transport fuel cell") & (n.links.bus1.str.contains(place))].index.values[0]] = (p_nom[place])/max(p_nom[place])/ costs.at['Hydrogen fuel cell (passenger cars)','efficiency']
             n.links.loc[n.links.carrier=='land transport fuel cell', "capital_cost"] = 0
 
 

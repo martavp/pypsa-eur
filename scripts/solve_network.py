@@ -553,7 +553,7 @@ def add_chp_constraints(n):
 
 def add_pipe_retrofit_constraint(n):
     """
-    Add constraint for retrofitting existing CH4 pipelines to H2 pipelines.
+    Add constraint for retrofitting existing CH4 pipelines to H2 pipelines.if
     """
     gas_pipes_i = n.links.query("carrier == 'gas pipeline' and p_nom_extendable").index
     h2_retrofitted_i = n.links.query(
@@ -584,10 +584,10 @@ def add_v2g_constraint():
 
 def add_EV_storage_constraint():
     bev_charger = n.links[n.links.carrier.str.contains('BEV charger')].index
-    lhs1 = n.model["Link-p_nom"].loc[bev_charger]/(n.config['sector']['bev_charge_rate']*n.config['sector']['increase_nb_cars'])
+    lhs1 = n.model["Link-p_nom"].loc[bev_charger]/n.config['sector']['bev_charge_rate']
     #lhs1 = n.model.variables['Link-p_nom'].sel({'Link-ext':'BEV charger'})/(config['sector']['EV_charge_rate']*config['sector']['increase_nb_cars'])
     ev_store = n.stores[n.stores.carrier.str.contains('EV battery storage')].index
-    lhs2 = n.model.variables['Store-e_nom'].loc[ev_store]/(n.config['sector']['bev_energy']*n.config['sector']['increase_nb_cars'])
+    lhs2 = n.model.variables['Store-e_nom'].loc[ev_store]/n.config['sector']['bev_energy']
     #lhs2 = n.model.variables['Store-e_nom'].sel({'Store-ext':'EV battery storage'})/(n.config['sector']['bev_energy']*n.config['sector']['increase_nb_cars'])
     lhs = lhs1-lhs2
     rhs = 0
@@ -632,11 +632,11 @@ def extra_functionality(n, snapshots):
     investment_year = int(snakemake.wildcards.planning_horizons[-4:])
     if config['sector']["land_transport_electric_share"][investment_year] < 0:
         if config['sector']["bev_dsm"]:
-          print('bev_dsm true')
+          print('------------------------------------bev_dsm true')
           add_EV_storage_constraint()
           #add_EV_number_constraint()
         if config['sector']["v2g"]:
-          print('v2g true')
+          print('--------------------------------------v2g true')
           add_v2g_constraint()
 
 
